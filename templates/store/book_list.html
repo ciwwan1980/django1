@@ -1,22 +1,44 @@
 <!-- templates/store/book_list.html -->
-{% extends "store/base.html" %}
 
+{% extends "store/base.html" %}
+{% load static %}
 {% block content %}
     <div class="content-body">
         <div class="container" >
             <div class="row">
                 <main class="col-md-12">
-                    <div class="widget widget-recent-posts">
-                        <h3 class="widget-title">All the books in our store</h3>
-                        <ul>
-                            {% for book in bookss %}
-                                <li>
-                                    <strong>{{ book.title }} by {{ book.author }}</strong>
-                                    <span style="color: blue;"> :  Book Summary: {{ book.summary }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                    {% for book in books %}
+						<article class="post post-1">
+							<header class="entry-header">
+								<h1 class="entry-title">
+									<a href="#">{{ book.title | lower }}</a>
+								</h1>
+								<div class="entry-meta">
+									{% if book.genre.all %}
+										{% for genre in book.genre.all %}
+										<span class="post-category"><a href="#">{{ genre }}</a></span>
+										{% endfor %}
+									{% else %}
+										<span class="post-category"><a href="#">No Genres</a></span>
+									{% endif %}
+			
+									<span class="post-date"><a href="#">{{ book.date_of_publishing | date:"Y, D d M " }}</a></span>
+			
+									<span class="post-author"><a href="#">{{ book.author }}</a></span>
+								</div>
+							</header>
+							<div class="entry-content clearfix">
+								<div class="read-more cl-effect-14">
+									<a href="#" class="more-link">Read summary <span class="meta-nav">→</span></a>
+								</div>
+							</div>
+						</article>
+						{% endfor %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="Submit" value="Save">
+                    </form>
                 </main>
             </div>
         </div>

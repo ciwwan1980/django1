@@ -79,9 +79,11 @@
 
 
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.generic import ListView
 from .models import Author, Book
+from .forms import BookForm
+
 
 def index(request):
     num_of_books = Book.objects.all().count()
@@ -92,7 +94,30 @@ class AuthorListView(View):
         authors = Author.objects.all()
         return render(request, "store/author_list.html", {"authors": authors})
 
+# class BookListView(View):
+#     def get(self, request):
+#         books = Book.objects.all()
+#         return render(request, 'store/book_list.html', {'bookss': books})
+
+
+
 class BookListView(View):
+    
     def get(self, request):
         books = Book.objects.all()
-        return render(request, 'store/book_list.html', {'bookss': books})
+        form = BookForm()
+        return render(request, 'store/book_list.html', {
+            "books": books, "form": form                                                                                                     
+        })
+        
+    def post(self, request):
+        form = BookForm(request.POST)
+        books = Book.objects.all()
+        
+        if form.is_valid():
+            form.save()
+            return redirect('store:book_list')
+        else:
+            return render(request, "store/book_list.html", {
+                "form": form, "books": books
+                })    
